@@ -56,11 +56,11 @@ export class TasksService {
         if(task.title && task.title?.length > 100){
             return err('Title cannot exceed 100 characters')
         }
-        if(task.priority && task.priority != 'low' && task.priority != 'medium' && task.priority != 'high'){
+        if(task.priority !== undefined && task.priority != 'low' && task.priority != 'medium' && task.priority != 'high'){
             return err('Priority must be low, medium or high')
         }
     
-        if(task.status && task.status != 'to-do' && task.status != 'in-progress' && task.status != 'done'){
+        if(task.status !== undefined && task.status != 'to-do' && task.status != 'in-progress' && task.status != 'done'){
             return err('Status must be to-do, in-progress or done')
         }
     

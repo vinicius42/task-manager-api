@@ -53,6 +53,15 @@ export class UsersService {
         if(update.password == ''){
             return err('Password is required')
         }
+
+        if(update.role !== undefined && update.role != 'admin' && update.role != 'member'){
+            return err('Role must be admin or member')
+        }
+    
+        const getUserId = getUserByIdRepository(id);
+        if(!getUserId.success){
+            return err('User not found')
+        }
     
         return updateUserRepository(id, update);
     }
