@@ -1,7 +1,23 @@
+export const TaskStatus = {
+    TODO: 'to-do',
+    IN_PROGRESS: 'in-progress',
+    DONE: 'done'
+} as const;
+
+export type TaskStatus = typeof TaskStatus[keyof typeof TaskStatus];
+
+export const Priority = {
+    LOW: 'low',
+    MEDIUM: 'medium',
+    HIGH: 'high'
+} as const;
+
+export type Priority = typeof Priority[keyof typeof Priority];
+
 export interface Task {
     id: string;
     title: string;
-    description: string;
+    description?: string;
     priority: Priority;
     status: TaskStatus; 
     createDate: string;
@@ -9,10 +25,6 @@ export interface Task {
     completedAt: string | null;
     userId: string;
 }
-
-export type Priority = 'low' | 'medium' | 'high';
-
-export type TaskStatus = 'to-do' | 'in-progress' | 'done';
 
 export type CreateTaskInput = Omit<Task, 'id' | 'status' | 'createDate' | 'updateDate' | 'completedAt'>;
 
