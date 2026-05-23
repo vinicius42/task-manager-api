@@ -1,72 +1,58 @@
 import { Injectable } from '@nestjs/common';
 import { ok, err, type Result } from "../utils/result";
-import { createUserRepository, deleteUserRepository, getAllUsersRepository, getUserByIdRepository, updateUserRepository } from "../repositories/user.repository";
 import type { CreateUserInput, UpdateUserInput, User } from "../types/user.types";
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserEntity } from './entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-    createUser(input: CreateUserInput): Result<User>{
-        if(input.email == ''){
-            return err('Email is required')
-        }
-    
-        if(input.email.length > 100){
-            return err('Email cannot exceed 100 characters')
-        }
-    
-        if(input.password == ''){
-            return err('Password is required')
-        }
-    
-        if(input.role != 'admin' && input.role != 'member'){
-            return err('Role must be admin or member')
-        }
-    
-        const data: User = {
-            id: crypto.randomUUID(),
-            email: input.email,
-            password: input.password,
-            role: input.role,
-            createdAt: new Date().toISOString()
-        }
-    
-        if(createUserRepository(data).success){
-            return ok(data);
-        } else {
-            return err('Error creating user')
-        }
+    constructor(
+        //O decorator @InjectRepository() diz ao NestJS qual Entity o repositório gerencia.
+        @InjectRepository(UserEntity) 
+        private readonly userRepository: Repository<UserEntity>
+    ) {}
+    async createUser(input: CreateUserInput): Promise<Result<User>>{    
+        const create = this.userRepository.create(input);
+        create.role = input.role ?? 'member';
+        create.createdAt = new Date().toISOString();
+        return ok(await this.userRepository.save(create));
     }
     
-    getAllUsers(): Result<User[]>{
-        return getAllUsersRepository();
+    async getAllUsers(): Promise<Result<User[]>>{
+        const users = await this.userRepository.find();
+        return ok(users);
     }
     
-    getUserById(id: string): Result<User>{
-        return getUserByIdRepository(id);
-    }
-    
-    updateUser(id: string, update: UpdateUserInput): Result<User>{
-        if(update.email == ''){
-            return err('Email is required')
-        }
-    
-        if(update.password == ''){
-            return err('Password is required')
-        }
-
-        if(update.role !== undefined && update.role != 'admin' && update.role != 'member'){
-            return err('Role must be admin or member')
-        }
-    
-        const getUserId = getUserByIdRepository(id);
-        if(!getUserId.success){
+    async getUserById(id: string): Promise<Result<User>>{
+        const users = await this.userRepository.findOneBy({ id });
+        if(!users){
             return err('User not found')
         }
-    
-        return updateUserRepository(id, update);
+        return ok(users)
     }
     
-    deleteUser(id: string): Result<User>{
-        return deleteUserRepository(id);
+    async updateUser(id: string, update: UpdateUserInput): Promise<Result<User>>{
+        const userUpdate = await this.userRepository.findOneBy({ id });
+        
+        if(!userUpdate){
+            return err('User not found')
+        }
+
+        userUpdate.email = update.email ?? userUpdate.email //Se update.email for uma string vazia '', o || vai usar o valor antigo. O operador correto para "use o novo valor se existir, senão mantenha o antigo" é ??.
+        userUpdate.password = update.password ?? userUpdate.password
+        userUpdate.role = update.role ?? userUpdate.role
+
+        return ok(await this.userRepository.save(userUpdate));
+    }
+    
+    async deleteUser(id: string): Promise<Result<User>>{
+        const getUser = await this.userRepository.findOneBy({ id });
+        if(!getUser){
+            return err('User not found')
+        }
+
+        await this.userRepository.remove(getUser);
+        return ok(getUser);
     }
 }
