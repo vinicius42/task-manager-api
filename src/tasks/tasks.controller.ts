@@ -1,14 +1,15 @@
 import { BadRequestException, Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, Post, Put } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import type { CreateTaskInput, UpdateTaskInput } from 'src/types/task.types';
+import { CreateTaskDTO } from './dto/create-task.dto';
+import { UpdateTaskDTO } from './dto/update-task.dto';
 
 @Controller('tasks')
 export class TasksController {
     constructor(private readonly tasksService: TasksService){}
 
     @Get()
-    getAllTasks(){
-        const tasks = this.tasksService.getAllTasks();
+    async getAllTasks(){
+        const tasks = await this.tasksService.getAllTasks();
         if(!tasks.success){
             throw new BadRequestException(tasks.error)
         }
@@ -16,8 +17,8 @@ export class TasksController {
     }
 
     @Get('/:id')
-    getTaskById(@Param('id') id: string){
-        const task = this.tasksService.getTaskById(id);
+    async getTaskById(@Param('id') id: string){
+        const task = await this.tasksService.getTaskById(id);
         if(!task.success){
             throw new NotFoundException(task.error)
         }
@@ -26,8 +27,8 @@ export class TasksController {
 
     @Post()
     @HttpCode(201)
-    createTask(@Body() create: CreateTaskInput){
-        const task = this.tasksService.createTask(create);
+    async createTask(@Body() create: CreateTaskDTO){
+        const task = await this.tasksService.createTask(create);
         if(!task.success){
             throw new BadRequestException(task.error)
         }
@@ -36,8 +37,8 @@ export class TasksController {
     }
 
     @Put('/:id')
-    updateTask(@Param('id') id: string, @Body() update: UpdateTaskInput){
-        const task = this.tasksService.updateTask(id, update)
+    async updateTask(@Param('id') id: string, @Body() update: UpdateTaskDTO){
+        const task = await this.tasksService.updateTask(id, update)
         if(!task.success){
             if(task.error == 'Task not found'){
                 throw new NotFoundException(task.error)
@@ -48,8 +49,8 @@ export class TasksController {
     }
 
     @Delete('/:id')
-    deleteTask(@Param('id') id: string){
-        const task = this.tasksService.deleteTask(id);
+    async deleteTask(@Param('id') id: string){
+        const task = await this.tasksService.deleteTask(id);
         if(!task.success){
             if(task.error == 'Task not found'){
                 throw new NotFoundException(task.error)
