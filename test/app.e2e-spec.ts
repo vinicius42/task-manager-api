@@ -105,7 +105,7 @@ describe('CreateUserController (e2e)', () => {
       .then((response) => {
         expect(response.body.message).toContain('User not found');
       })
-  })
+  }) 
  
   it('should create a new user', () => {
     const user = {
