@@ -1,13 +1,15 @@
-import { BadRequestException, Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, Post, Put } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpCode, NotFoundException, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import type { CreateUserInput, UpdateUserInput } from 'src/types/user.types';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
+import { JwtGuard } from 'src/auth/jwt.guard';
 
 @Controller('users')
 export class UsersController {
     constructor(private readonly usersService: UsersService){}
 
+    @UseGuards(JwtGuard)
     @Get()
     async getAllUsers(){
         const users = await this.usersService.getAllUsers();
@@ -17,6 +19,7 @@ export class UsersController {
         return users;
     }
 
+    @UseGuards(JwtGuard)
     @Get('/:id')
     async getUserById(@Param('id') id: string){
         const user = await this.usersService.getUserById(id);
@@ -37,6 +40,7 @@ export class UsersController {
         return user;
     }
 
+    @UseGuards(JwtGuard)
     @Put('/:id')
     async updateUser(@Param('id') id: string, @Body() update: UpdateUserDTO){
         const user = await this.usersService.updateUser(id, update)
@@ -49,6 +53,7 @@ export class UsersController {
         return user;
     }
 
+    @UseGuards(JwtGuard)
     @Delete('/:id')
     async deleteUser(@Param('id') id: string){
         const user = await this.usersService.deleteUser(id);
