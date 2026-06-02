@@ -14,10 +14,10 @@ export class TaskEntity{
     description?: string;
 
     @Column()
-    status!: TaskStatus;
+    status!: string;
 
     @Column()
-    priority!: Priority;
+    priority!: string;
 
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'userId' })

@@ -4,6 +4,8 @@ import type { CreateUserInput, UpdateUserInput, User } from "../types/user.types
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { UserEntityToUser } from './user.mapper';
 
 @Injectable()
 export class UsersService {
@@ -12,16 +14,45 @@ export class UsersService {
         @InjectRepository(UserEntity) 
         private readonly userRepository: Repository<UserEntity>
     ) {}
-    async createUser(input: CreateUserInput): Promise<Result<User>>{    
+
+    async getUserByEmail(email: string): Promise<Result<User>>{
+        const user = await this.userRepository.findOneBy({ email });
+        if(!user){
+            return err('User not found')
+        }
+
+        const userMapped = UserEntityToUser(user);
+
+        return ok(userMapped);
+    }
+
+    async createUser(input: CreateUserInput): Promise<Result<User>>{
+        const emailExists = await this.userRepository.findOneBy({ email: input.email });
+        if(emailExists){
+            return err('Email already exists')
+        }
+
         const create = this.userRepository.create(input);
+
+        create.password = await bcrypt.hash(input.password, 10)
         create.role = input.role ?? 'member';
         create.createdAt = new Date().toISOString();
-        return ok(await this.userRepository.save(create));
+
+        const saveUser = await this.userRepository.save(create);
+
+        const userMapped = UserEntityToUser(saveUser);
+
+        return ok(userMapped);
     }
     
     async getAllUsers(): Promise<Result<User[]>>{
         const users = await this.userRepository.find();
-        return ok(users);
+        if(!users){
+            return err('Users not found')
+        }
+
+        const usersMapped = users.map(UserEntityToUser);
+        return ok(usersMapped);
     }
     
     async getUserById(id: string): Promise<Result<User>>{
@@ -29,7 +60,9 @@ export class UsersService {
         if(!users){
             return err('User not found')
         }
-        return ok(users)
+
+        const userMapped = UserEntityToUser(users);
+        return ok(userMapped)
     }
     
     async updateUser(id: string, update: UpdateUserInput): Promise<Result<User>>{
@@ -43,7 +76,10 @@ export class UsersService {
         userUpdate.password = update.password ?? userUpdate.password
         userUpdate.role = update.role ?? userUpdate.role
 
-        return ok(await this.userRepository.save(userUpdate));
+        const updatedUser = await this.userRepository.save(userUpdate);
+        const userMapped = UserEntityToUser(updatedUser);
+
+        return ok(userMapped);
     }
     
     async deleteUser(id: string): Promise<Result<User>>{
@@ -52,7 +88,8 @@ export class UsersService {
             return err('User not found')
         }
 
-        await this.userRepository.remove(getUser);
-        return ok(getUser);
+        const deletedUser = await this.userRepository.remove(getUser);
+        const userMapped = UserEntityToUser(deletedUser);
+        return ok(userMapped);
     }
 }

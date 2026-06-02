@@ -13,7 +13,7 @@ export class UserEntity{
     password!: string;
 
     @Column()
-    role!: UserRole;
+    role!: string;
 
     @Column()
     createdAt!: string;

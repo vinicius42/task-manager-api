@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TaskEntity } from './entity/task.entity';
 import { Repository } from 'typeorm';
 import { UserEntity } from 'src/users/entities/user.entity';
+import { TaskEntityToTask } from './task.mapper';
 
 @Injectable()
 export class TasksService {
@@ -24,12 +25,18 @@ export class TasksService {
         create.updateDate = new Date().toISOString();
         create.priority = input.priority ?? 'low';
         create.status = 'to-do';
-        return ok(await this.taskRepository.save(create));
+
+        const saveTask = await this.taskRepository.save(create);
+
+        const taskMapped = TaskEntityToTask(saveTask);
+
+        return ok(taskMapped);
     }
     
     async getAllTasks(): Promise<Result<Task[]>>{
         const tasks = await this.taskRepository.find();
-        return ok(tasks)
+        const tasksMapped = tasks.map(TaskEntityToTask);
+        return ok(tasksMapped)
     }
     
     async getTaskById(id: string): Promise<Result<Task>>{
@@ -37,7 +44,8 @@ export class TasksService {
         if(!taskById){
             return err('Task not found')
         }
-        return ok(taskById)
+        const taskMapped = TaskEntityToTask(taskById);
+        return ok(taskMapped)
     }
     
     async updateTask(id: string, task: UpdateTaskInput): Promise<Result<Task>>{
@@ -52,7 +60,9 @@ export class TasksService {
         taskUpdate.status = task.status ?? taskUpdate.status
         taskUpdate.updateDate = new Date().toISOString();
 
-        return ok(await this.taskRepository.save(taskUpdate));        
+        const updatedTask = await this.taskRepository.save(taskUpdate);
+        const taskMapped = TaskEntityToTask(updatedTask);
+        return ok(taskMapped);
     }
     
     async deleteTask(id: string): Promise<Result<Task>>{
@@ -60,7 +70,8 @@ export class TasksService {
         if(!getTask){
             return err('Task not found')
         }
-        await this.taskRepository.remove(getTask);
-        return ok(getTask);
+        const deletedTask = await this.taskRepository.remove(getTask);
+        const taskMapped = TaskEntityToTask(deletedTask);
+        return ok(taskMapped);
     }
 }
