@@ -106,7 +106,7 @@ describe('CreateUserController (e2e)', () => {
         expect(response.body.message).toContain('User not found');
       })
   })
-
+ 
   it('should create a new user', () => {
     const user = {
       email: 'email@email.com',
