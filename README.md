@@ -1,98 +1,122 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# task-manager-api
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A RESTful API for managing tasks and users, built with NestJS and PostgreSQL. Features JWT authentication, role-based access control, integration testing, and CI/CD with GitHub Actions.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## Stack
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **Runtime:** Node.js v24+
+- **Framework:** NestJS + TypeScript
+- **Database:** PostgreSQL (TypeORM)
+- **Auth:** JWT + bcrypt + Passport
+- **Validation:** class-validator + class-transformer
+- **Docs:** Swagger / OpenAPI
+- **Testing:** Jest + supertest (e2e)
+- **CI/CD:** GitHub Actions
+- **Infra:** Docker + Docker Compose
 
-## Project setup
+---
 
-```bash
-$ npm install
-```
+## Getting Started
 
-## Compile and run the project
+### Prerequisites
+
+- Node.js v24+
+- Docker and Docker Compose
+
+### Setup
+
+1. Clone the repository and install dependencies:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+git clone https://github.com/vinicius42/task-manager-api.git
+cd task-manager-api
+npm install
 ```
 
-## Run tests
+2. Copy the example env file and fill in the values:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+cp .env.example .env
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+3. Start PostgreSQL and Adminer:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+docker compose up -d
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+4. Start the application:
 
-## Resources
+```bash
+npm run start:dev
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+5. Access the Swagger docs at `http://localhost:3000/api`
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+## Environment Variables
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+DB_NAME=taskdb
+JWT_SECRET=your_secret_here
+```
 
-## Stay in touch
+---
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Endpoints
 
-## License
+### Auth
+| Method | Route | Auth | Description |
+|--------|-------|------|-------------|
+| POST | /auth/login | ❌ | Authenticate and receive JWT token |
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+### Users
+| Method | Route | Auth | Description |
+|--------|-------|------|-------------|
+| GET | /users | ✅ | List all users |
+| GET | /users/:id | ✅ | Get user by id |
+| POST | /users | ❌ | Create user |
+| PUT | /users/:id | ✅ | Update user |
+| DELETE | /users/:id | ✅ | Delete user |
+
+### Tasks
+| Method | Route | Auth | Description |
+|--------|-------|------|-------------|
+| GET | /tasks | ✅ | List all tasks |
+| GET | /tasks/:id | ✅ | Get task by id |
+| POST | /tasks | ✅ | Create task |
+| PUT | /tasks/:id | ✅ | Update task |
+| DELETE | /tasks/:id | ✅ | Delete task |
+
+---
+
+## Testing
+
+Integration tests run against an isolated PostgreSQL instance on a separate port, fully torn down and seeded between suites.
+
+```bash
+npm run test:e2e
+```
+
+Covers, among other scenarios: user creation and validation, login with valid/invalid credentials, and a concurrency test that fires two simultaneous signup requests with the same email to confirm the database-level unique constraint correctly rejects the race condition with a 409 Conflict.
+
+---
+
+## Key Concepts Applied
+
+- **NestJS architecture** — modules, controllers, services, dependency injection
+- **TypeORM** — entities, repositories, relations, UUID primary keys
+- **Authentication** — JWT with PassportStrategy, route protection with Guards, bcrypt password hashing
+- **Validation** — DTOs with class-validator, global ValidationPipe with whitelist and transform
+- **Error handling** — NestJS exceptions (NotFoundException, ConflictException, UnauthorizedException) instead of a custom Result pattern, with unknown errors delegated to the global exception filter
+- **Data integrity** — unique constraint on email at the database level, combined with an application-level pre-check for fast feedback
+- **Testing** — integration tests with Jest and supertest, isolated test database, concurrency/race-condition testing with Promise.all
+- **CI/CD** — automated test runs via GitHub Actions with a dedicated PostgreSQL service container
+- **API documentation** — Swagger with bearer auth support for protected routes
