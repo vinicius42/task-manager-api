@@ -14,10 +14,6 @@ export class AuthController {
     @ApiResponse({ status: 200, description: 'User logged in successfully' })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     async login(@Body() loginDTO: loginDTO){
-        const userLogin = await this.authService.login(loginDTO.email, loginDTO.password)
-        if(!userLogin.success){
-            throw new UnauthorizedException(userLogin.error)
-        }
-        return userLogin;
+        return await this.authService.login(loginDTO.email, loginDTO.password)
     }
 }

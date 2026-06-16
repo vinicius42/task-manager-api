@@ -73,7 +73,7 @@ describe('CreateUserController (e2e)', () => {
       .send(credentials)
       .expect(200)
       .then((response) => {
-        expect(response.body.data.access_token).toBeDefined();
+        expect(response.body.access_token).toBeDefined();
       })
   })
 
@@ -101,15 +101,38 @@ describe('CreateUserController (e2e)', () => {
     return request(app.getHttpServer())
       .post('/auth/login')
       .send(credentials)
-      .expect(401)
+      .expect(404)
       .then((response) => {
         expect(response.body.message).toContain('User not found');
       })
-  }) 
+  })
+
+  it('should validate race condition on user creation and return conflict - email already exists', async () => {
+    const user = {
+      email: 'email@email.com',
+      password: 'password',
+      role: 'admin'
+    }
+
+    const user2 = {
+      email: 'email@email.com',
+      password: 'password',
+      role: 'admin'
+    }
+
+    const [ response1, response2 ] = await Promise.all([
+      request(app.getHttpServer()).post('/users').send(user),
+      request(app.getHttpServer()).post('/users').send(user2) 
+    ])
+
+    const statuses = [response1.status, response2.status].sort();
+
+    expect(statuses).toEqual([201, 409])
+  })
  
   it('should create a new user', () => {
     const user = {
-      email: 'email@email.com',
+      email: 'emailfsa@email.com',
       password: 'password',
       role: 'admin'
     }
@@ -119,11 +142,10 @@ describe('CreateUserController (e2e)', () => {
       .send(user)
       .expect(201)
       .then((response) => {
-        expect(response.body.data.id).toBeDefined();
-        expect(response.body.data.email).toBe(user.email);
-        expect(response.body.data.password).toBeDefined();
-        expect(response.body.data.role).toBe(user.role);
-        expect(response.body.data.createdAt).toBeDefined();
+        expect(response.body.id).toBeDefined();
+        expect(response.body.email).toBe(user.email);
+        expect(response.body.role).toBe(user.role);
+        expect(response.body.createdAt).toBeDefined();
       })
   })
 

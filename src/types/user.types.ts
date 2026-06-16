@@ -11,14 +11,14 @@ export type UserRole = typeof UserRole[keyof typeof UserRole];
 export interface User {
     id: string;
     email: string;
-    password: string;
+    password?: string;
     role: UserRole;
     createdAt: string;
 }
 
-export type LoginInput = Pick<User, 'id' | 'email' | 'role'>;
+export type LoginInput = Required<Pick<User, 'id' | 'email' | 'password' | 'role'>>;
 
-export type CreateUserInput = Omit<User, 'id' | 'createdAt' | 'role'> & Partial<Pick<User, 'role'>>;
+export type CreateUserInput = Omit<User, 'id' | 'createdAt' | 'role'> & Partial<Pick<User, 'role'>> & Required<Pick<User, 'password'>>;
 
 export type UpdateUserInput = Partial<Pick<User, 'email' | 'password' | 'role'>>;
 
