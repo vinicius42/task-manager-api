@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
-import { err, ok } from 'src/utils/result';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -12,26 +11,22 @@ export class AuthService {
     ) {}
 
     async login(email: string, password: string) {
-        const userService = await this.usersService.getUserByEmail(email);
+        const userService = await this.usersService.getUserCredentials(email);
 
-        if(!userService.success){
-            return err('User not found')
-        }
-
-        const comparePassword = await bcrypt.compare(password, userService.data.password);
+        const comparePassword = await bcrypt.compare(password, userService.password);
         if(!comparePassword){
-            return err('Invalid password')
+            throw new UnauthorizedException('Invalid password')
         }
 
         const payload = {
-            id: userService.data.id,
-            email: userService.data.email,
-            role: userService.data.role
+            id: userService.id,
+            email: userService.email,
+            role: userService.role
         }
 
-        return ok ({
+        return {
             access_token: await this.jwtService.signAsync(payload)
-        })  
+        }
         
     }
 }
