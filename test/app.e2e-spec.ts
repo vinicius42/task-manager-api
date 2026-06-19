@@ -62,13 +62,13 @@ describe('CreateUserController (e2e)', () => {
       .expect(201)
   })
 
-  it('should login with valid credentials', () => {
+  it('should login with valid credentials', async () => {
     const credentials = {
       email: 'teste@email.com',
       password: 'password'
     }
 
-    return request(app.getHttpServer())
+    return await request(app.getHttpServer())
       .post('/auth/login')
       .send(credentials)
       .expect(200)
@@ -77,13 +77,13 @@ describe('CreateUserController (e2e)', () => {
       })
   })
 
-  it('should not login with invalid password', () => {
+  it('should not login with invalid password', async () => {
     const credentials = {
       email: 'teste@email.com',
       password: 'wrongpassword'
     }
 
-    return request(app.getHttpServer())
+    return await request(app.getHttpServer())
       .post('/auth/login')
       .send(credentials)
       .expect(401)
@@ -92,13 +92,13 @@ describe('CreateUserController (e2e)', () => {
       })
   })
 
-  it('should not login with non-existing email', () => {
+  it('should not login with non-existing email', async () => {
     const credentials = {
       email: 'nonexisting@email.com',
       password: 'password'
     }
 
-    return request(app.getHttpServer())
+    return await request(app.getHttpServer())
       .post('/auth/login')
       .send(credentials)
       .expect(404)
@@ -130,14 +130,14 @@ describe('CreateUserController (e2e)', () => {
     expect(statuses).toEqual([201, 409])
   })
  
-  it('should create a new user', () => {
+  it('should create a new user', async () => {
     const user = {
       email: 'emailfsa@email.com',
       password: 'password',
       role: 'admin'
     }
 
-    return request(app.getHttpServer())
+    return await request(app.getHttpServer())
       .post('/users')
       .send(user)
       .expect(201)
@@ -149,14 +149,14 @@ describe('CreateUserController (e2e)', () => {
       })
   })
 
-  it('should not create a new user with invalid email', () => {
+  it('should not create a new user with invalid email', async () => {
     const user = {
       email: 'invalid-email',
       password: 'password',
       role: 'admin'
     }
 
-    return request(app.getHttpServer())
+    return await request(app.getHttpServer())
       .post('/users')
       .send(user)
       .expect(400)
@@ -165,13 +165,13 @@ describe('CreateUserController (e2e)', () => {
       })
   })
 
-  it('should not create a new user with missing password', () => {
+  it('should not create a new user with missing password', async () => {
     const user = {
       email: 'teste@email.com',
       role: 'admin'
     }
 
-    return request(app.getHttpServer())
+    return await request(app.getHttpServer())
       .post('/users')
       .send(user)
       .expect(400)
