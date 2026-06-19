@@ -24,10 +24,6 @@ services:
     image: postgres
     restart: always
     shm_size: 128mb
-    environment:
-      POSTGRES_USER: ${DB_USERNAME_TEST}
-      POSTGRES_PASSWORD: ${DB_PASS_TEST}
-      POSTGRES_DB: ${DB_NAME_TEST}
     ports:
       - 5433:5432
     env_file:
