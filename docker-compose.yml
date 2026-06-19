@@ -14,9 +14,9 @@ services:
     #    tmpfs:
     #      size: 134217728 # 128*2^20 bytes = 128Mb
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: taskdb
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
       - 5432:5432
   
@@ -24,12 +24,10 @@ services:
     image: postgres
     restart: always
     shm_size: 128mb
-    environment:
-      POSTGRES_USER: usertest
-      POSTGRES_PASSWORD: passwordtest
-      POSTGRES_DB: taskdbtest
     ports:
       - 5433:5432
+    env_file:
+      - ./.env.test
 
 
   adminer:

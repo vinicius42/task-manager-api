@@ -20,6 +20,17 @@ jobs:
           node-version: 24
       - name: Install dependencies
         run: npm install
+      - name: Create .env.test file
+        run: |
+          echo "DB_HOST=localhost" > .env.test
+          echo "DB_PORT=5433" >> .env.test
+          echo "DB_USERNAME=usertest" >> .env.test
+          echo "DB_PASSWORD=passwordtest" >> .env.test
+          echo "DB_NAME=taskdbtest" >> .env.test
+          echo "JWT_SECRET=test-secret" >> .env.test
+          echo "POSTGRES_USER=usertest" >> .env.test
+          echo "POSTGRES_PASSWORD=passwordtest" >> .env.test
+          echo "POSTGRES_DB=taskdbtest" >> .env.test
       - name: Deploy test database with Docker PostgreSQL
         run: docker compose up -d db test
       - name: Wait for PostgreSQL to be ready
@@ -28,13 +39,5 @@ jobs:
             echo "Waiting for PostgreSQL to be ready..."
             sleep 5
           done
-      - name: Create .env.test file
-        run: |
-          echo "DB_HOST=localhost" >> .env.test
-          echo "DB_PORT=5433" >> .env.test
-          echo "DB_USERNAME=usertest" >> .env.test
-          echo "DB_PASSWORD=passwordtest" >> .env.test
-          echo "DB_NAME=taskdbtest" >> .env.test
-          echo "JWT_SECRET=test-secret" >> .env.test
       - name: Run tests
         run: npm run test:e2e
