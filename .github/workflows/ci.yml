@@ -30,6 +30,8 @@ jobs:
           echo "JWT_SECRET=test-secret" >> .env.test
       - name: Deploy test database with Docker PostgreSQL
         run: docker compose up -d db test
+      - name: Show container logs
+        run: docker logs $(docker ps -aqf "name=test")
       - name: Wait for PostgreSQL to be ready
         run: |
           until docker exec $(docker ps -qf "name=test") pg_isready -U usertest; do
